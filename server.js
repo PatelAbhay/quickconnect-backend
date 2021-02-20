@@ -29,19 +29,19 @@ app.use(morgan("tiny"));
 //  user name
 //  post content
 
-var post_count = 0;
-var user_count = 0;
-var comment_count = 0;
+var post_count = 5;
+var user_count = 3;
+var comment_count = 5;
 
 var posts = [
   {
-    id: '',
+    id: '0',
     user_name: 'Sami',
     text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     num_likes: 0,
     comments: [
       {
-        id: '',
+        id: '0',
         from_id: '',
         from_name: '',
         content: '',
@@ -49,13 +49,13 @@ var posts = [
     ],
   },
   {
-    id: '',
+    id: '1',
     user_name: 'Sami',
     text: 'Sometimes Ill start a sentance and I dont even know where its going.',
     num_likes: 4,
     comments: [
       {
-        id: '',
+        id: '1',
         from_id: '',
         from_name: '',
         content: '',
@@ -63,13 +63,13 @@ var posts = [
     ],
   },
   {
-    id: '',
+    id: '2',
     user_name: 'Sami',
     text: 'I. DECLARE. BANKRUPTCY.',
     num_likes: 12,
     comments: [
       {
-        id: '',
+        id: '2',
         from_id: '',
         from_name: '',
         content: '',
@@ -77,13 +77,13 @@ var posts = [
     ],
   },
   {
-    id: '',
+    id: '3',
     user_name: 'Sami',
     text: 'Occasionally, Ill hit somebody with my car, so sue me',
     num_likes: 78,
     comments: [
       {
-        id: '',
+        id: '3',
         from_id: '',
         from_name: '',
         content: '',
@@ -91,13 +91,13 @@ var posts = [
     ],
   },
   {
-    id: '',
+    id: '4',
     user_name: 'Sami',
     text: 'I am running away from my responsibilites, and it feels good',
     num_likes: 46,
     comments: [
       {
-        id: '',
+        id: '4',
         from_id: '',
         from_name: '',
         content: '',
@@ -108,21 +108,21 @@ var posts = [
 
 var users = [
   {
-    id: '',
+    id: '0',
     name: 'Tirth',
     email: 'tirth@somewhere.com',
     password: '',
     account_type: 'normal',
   },
   {
-    id: '',
+    id: '1',
     name: 'Sami',
     email: 'sami@somewhere.com',
     password: '',
     account_type: 'service provider',    
   },
   {
-    id: '',
+    id: '2',
     name: 'Abhay',
     email: 'abhay@somewhere.com',
     password: '',
@@ -151,7 +151,6 @@ app.post("/users", function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
   var user_type = req.body.account_type;
-
 
   console.log("email: ", email);
   try {
