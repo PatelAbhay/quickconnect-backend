@@ -24,51 +24,108 @@ app.use(morgan("tiny"));
 // Routing
 // app.use("/ws/", otherRoutes);
 
+// new post
+//  user id
+//  user name
+//  post content
+
+var post_count = 0;
+var user_count = 0;
+var comment_count = 0;
+
 var posts = [
   {
+    id: '',
     user_name: 'Sami',
     text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     num_likes: 0,
+    comments: [
+      {
+        id: '',
+        from_id: '',
+        from_name: '',
+        content: '',
+      }
+    ],
   },
   {
+    id: '',
     user_name: 'Sami',
     text: 'Sometimes Ill start a sentance and I dont even know where its going.',
     num_likes: 4,
+    comments: [
+      {
+        id: '',
+        from_id: '',
+        from_name: '',
+        content: '',
+      }
+    ],
   },
   {
+    id: '',
     user_name: 'Sami',
     text: 'I. DECLARE. BANKRUPTCY.',
     num_likes: 12,
+    comments: [
+      {
+        id: '',
+        from_id: '',
+        from_name: '',
+        content: '',
+      }
+    ],
   },
   {
+    id: '',
     user_name: 'Sami',
     text: 'Occasionally, Ill hit somebody with my car, so sue me',
     num_likes: 78,
+    comments: [
+      {
+        id: '',
+        from_id: '',
+        from_name: '',
+        content: '',
+      }
+    ],
   },
   {
+    id: '',
     user_name: 'Sami',
     text: 'I am running away from my responsibilites, and it feels good',
     num_likes: 46,
+    comments: [
+      {
+        id: '',
+        from_id: '',
+        from_name: '',
+        content: '',
+      }
+    ],
   },
 ]
 
 var users = [
   {
+    id: '',
     name: 'Tirth',
-    age: 20,
     email: 'tirth@somewhere.com',
+    password: '',
     account_type: 'normal',
   },
   {
+    id: '',
     name: 'Sami',
-    age: 24,
     email: 'sami@somewhere.com',
-    account_type: 'verified',    
+    password: '',
+    account_type: 'service provider',    
   },
   {
+    id: '',
     name: 'Abhay',
-    age: 19,
     email: 'abhay@somewhere.com',
+    password: '',
     account_type: 'normal',
   },
 ]
@@ -90,8 +147,12 @@ app.get("/test", function(req, res) {
 });
 
 app.post("/users", function(req, res) {
+  var name = req.body.name;
   var email = req.body.email;
   var password = req.body.password;
+  var user_type = req.body.account_type;
+
+
   console.log("email: ", email);
   try {
     res.send({ result: "Test Result"});
@@ -116,11 +177,11 @@ app.get("/getPosts", function(req, res) {
   }
 });
 
-app.get("/getVerifiedUsers", function(req, res) {
+app.get("/getServiceUsers", function(req, res) {
   try {
     var v_list = []
     for(var i = 0; i < users.length; i++){
-      if(users[i].account_type === 'verified') v_list.push(users[i])
+      if(users[i].account_type === 'service provider') v_list.push(users[i])
     }
     res.send({ result: v_list});
   } catch(e) {
