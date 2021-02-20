@@ -27,90 +27,78 @@ app.use(cors());
 // Logs all request information and time
 app.use(morgan("tiny"));
 
-
-// Database Connection with MySQL
-// dbHandler.connectToDatabase();
-
-// Routing
-// app.use("/ws/", otherRoutes);
-
-// new post
-//  user id
-//  user name
-//  post content
-
 var post_count = 5;
 var user_count = 3;
 var comment_count = 5;
 
 var posts = [
   {
-    id: '0',
+    id: 0,
     user_name: 'Sami',
     text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     num_likes: 0,
     comments: [
       {
-        id: '0',
         from_id: '',
-        from_name: '',
-        content: '',
+        from_name: 'Agent K',
+        content: 'What do you mean?',
       }
     ],
   },
   {
-    id: '1',
+    id: 1,
     user_name: 'Sami',
     text: 'Sometimes Ill start a sentance and I dont even know where its going.',
     num_likes: 4,
     comments: [
       {
-        id: '1',
         from_id: '',
-        from_name: '',
-        content: '',
+        from_name: 'Dummy User',
+        content: 'Sounds confusing',
       }
     ],
   },
   {
-    id: '2',
+    id: 2,
     user_name: 'Sami',
     text: 'I. DECLARE. BANKRUPTCY.',
     num_likes: 12,
     comments: [
       {
-        id: '2',
         from_id: '',
-        from_name: '',
-        content: '',
+        from_name: 'Agent K',
+        content: 'Good for you',
       }
     ],
   },
   {
-    id: '3',
+    id: 3,
     user_name: 'Sami',
     text: 'Occasionally, Ill hit somebody with my car, so sue me',
     num_likes: 78,
     comments: [
       {
-        id: '3',
         from_id: '',
-        from_name: '',
-        content: '',
+        from_name: 'Agent K',
+        content: 'Good for you',
       }
     ],
   },
   {
-    id: '4',
+    id: 4,
     user_name: 'Sami',
     text: 'I am running away from my responsibilites, and it feels good',
     num_likes: 46,
     comments: [
       {
-        id: '4',
         from_id: '',
-        from_name: '',
-        content: '',
+        from_name: 'Agent K',
+        content: 'That sucks!',
+      },
+      {
+        from_id: '',
+        from_name: 'Lone Wolf',
+        content: 'Growing up I see. But in life you will need to learn to take responsiblities otherwise you will always be dependent on other and it is not good.',
       }
     ],
   },
@@ -118,26 +106,40 @@ var posts = [
 
 var users = [
   {
-    id: '0',
+    id: 0,
     name: 'Tirth',
     email: 'tirth@somewhere.com',
     password: '',
     account_type: 'normal',
   },
   {
-    id: '1',
+    id: 1,
     name: 'Sami',
-    email: 'sami@somewhere.com',
-    password: '',
-    account_type: 'service provider',    
+    email: 'jabz@gmail.com',
+    password: 'samisami',
+    account_type: 'regular',    
   },
   {
-    id: '2',
+    id: 2,
     name: 'Abhay',
     email: 'abhay@somewhere.com',
     password: '',
     account_type: 'normal',
   },
+  {
+    account_type: "regular",
+    email: "sami@gmail.com",
+    id: 3,
+    name: "Jabz",
+    password: "samisami"
+  },
+  {
+    account_type: "regular",
+    email: "john@gmail.com",
+    id: 4,
+    name: "John",
+    password: "samisami"
+  }
 ]
 
 app.get("/", function(req, res) {
@@ -157,31 +159,33 @@ app.get("/test", function(req, res) {
 });
 
 app.post("/users", function(req, res) {
+  console.log("entered!!!");
   try {
-    //var name = req.body.name;
-    //var email = req.body.email;
-    //var password = req.body.password;
-    //var user_type = req.body.account_type;
-
+    let totalUsers = users.length;
+    console.log("totalUsers: ", totalUsers);
     var new_obj = {
+      id: totalUsers,
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       account_type: req.body.account_type
     };
-
     for(var i = 0; i < users.length; i++){
       if(email == users[i].email){
         new_obj = null;
         break;
       }
     }
-
-    if(new_obj != null) users.push(new_obj);
-    else console.log("Already exists")
-    
-    console.log(new_obj);
-    //res.send({ result: });
+    console.log("totalUsers 1: ");
+    if(new_obj != null) {
+      console.log("totalUsers 2: ");
+      users.push(new_obj);
+      res.send({ result: "SUCCESS"});
+    }
+    else {
+      console.log("Already exists")
+      res.send({ error: "Already exists"});
+    }
   } catch(e) {
       res.send("Error C-001: ", e);
   }
@@ -195,7 +199,7 @@ app.get("/getUsers", function(req, res) {
   }
 });
 
-app.get("/getPosts", function(req, res) {
+app.get("/posts", function(req, res) {
   try {
     res.send({ result: posts});
   } catch(e) {
@@ -325,4 +329,73 @@ app.get("/getMessages/:from_id/:to_id", function(req, res) {
     res.send({ error: e});
   }
 });
-
+app.get("/signin/:email/:password", function(req, res) {
+  let email = req.params.email;
+  let password = req.params.password; 
+  let userInfo = {};
+  try {
+    users.forEach(element => {
+      if(element.email == email && element.password == password) {
+        userInfo = element;
+        return;
+      }
+    });
+    res.send({ result: userInfo});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+app.post("/register", function(req, res) {
+  console.log("entered!!!");
+  try {
+    let totalUsers = users.length;
+    console.log("totalUsers: ", totalUsers);
+    var new_obj = {
+      id: totalUsers,
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      account_type: req.body.account_type
+    };
+    users.push(new_obj);
+    res.send({ result: "SUCCESS"});
+  } catch(e) {
+      res.send("Error C-001: ", e);
+  }
+});
+app.post("/posts", function(req, res) {
+  try {
+    posts.unshift(req.body);
+    res.send({ result: posts});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
+app.post("/postLike", function(req, res) {
+  try {
+    posts.forEach(element => {
+      if(element.id == req.body.id) {
+        element.num_likes += 1;
+      }
+    });
+    res.send({ result: posts});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
+app.post("/postComment", function(req, res) {
+  try {
+    posts.forEach(element => {
+      if(element.id == req.body.id) {
+        element.comments.unshift({
+          from_id: req.body.from_id,
+          from_name: req.body.from_name,
+          content: req.body.content,
+        });
+      }
+    });
+    res.send({ result: posts});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
