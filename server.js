@@ -157,14 +157,31 @@ app.get("/test", function(req, res) {
 });
 
 app.post("/users", function(req, res) {
-  var name = req.body.name;
-  var email = req.body.email;
-  var password = req.body.password;
-  var user_type = req.body.account_type;
-
-  console.log("email: ", email);
   try {
-    res.send({ result: "Test Result"});
+    //var name = req.body.name;
+    //var email = req.body.email;
+    //var password = req.body.password;
+    //var user_type = req.body.account_type;
+
+    var new_obj = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      account_type: req.body.account_type
+    };
+
+    for(var i = 0; i < users.length; i++){
+      if(email == users[i].email){
+        new_obj = null;
+        break;
+      }
+    }
+
+    if(new_obj != null) users.push(new_obj);
+    else console.log("Already exists")
+    
+    console.log(new_obj);
+    //res.send({ result: });
   } catch(e) {
       res.send("Error C-001: ", e);
   }
