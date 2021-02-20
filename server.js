@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 var path = require("path");
 var PORT = process.env.PORT || 3000;
 var cors = require("cors");
-
+const sqlite3 = require('sqlite3').verbose();
 
 
 var app = express();
@@ -26,6 +26,26 @@ app.use(cors());
 
 // Logs all request information and time
 app.use(morgan("tiny"));
+
+let db = new sqlite3.Database('./db/database.db', (err) => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log('Connected to db.');
+});
+
+db.serialize(function() {
+  db.run("CREATE TABLE user (id INT, user STRING)");
+
+  var stmt = db.prepare("INSERT INTO user VALUES (?,?)");
+  for (var i = 0; i < 10; i++) {
+    stmt.run(i, "Bob");
+  }
+  stmt.finalize();
+  db.each("SELECT id, dt FROM user", function(err, row) {
+    console.log("User id : " + row.id, row.user);
+  });
+});
 
 var post_count = 5;
 var user_count = 3;
