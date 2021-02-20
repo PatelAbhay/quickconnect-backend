@@ -3,16 +3,26 @@ var morgan = require("morgan");
 const bodyParser = require("body-parser");
 var path = require("path");
 var PORT = process.env.PORT || 3000;
+var cors = require("cors");
+
+
 
 var app = express();
+// const http = require("http").Server(app);
+// const socketIO = require("socket.io")(http);
 // var otherRoutes = require("./routes/routes");
 
-// Joining directories into one
-// app.use(express.static(path.join(__dirname, "public")));
-// app.use(express.static(path.join(__dirname, "views")));
+// socketIO.on('connection', s => {
+//   console.error('socket.io connection');
+//   socket.on("pingServer", () => {
+//     console.log("Hererahsd ajshdg ajshgd jahsd");
+//     socketIO.sockets.emit("get_data", "GOT IT");
+//   });
+// });
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(cors());
 
 // Logs all request information and time
 app.use(morgan("tiny"));
@@ -188,10 +198,114 @@ app.get("/getServiceUsers", function(req, res) {
   }
 });
 
-app.listen(PORT, function() {
-  console.log("Server started on port " + PORT + "...");
+// app.listen(PORT, function() {
+//   console.log("Server started on port " + PORT + "...");
+// });
+var messages = [
+  {
+    from_id: 1,
+    from: "Sami",
+    to_id: 3,
+    to: "Jazz",
+    message: "Hi",
+  },
+  {
+    from_id: 1,
+    from: "Sami",
+    to_id: 3,
+    to: "Jazz",
+    message: "How are you?",
+  },
+  {
+    from_id: 3,
+    from: "Jazz",
+    to_id: 1,
+    to: "Sami",
+    message: "I am great!!",
+  },
+  {
+    from_id: 1,
+    from: "Sami",
+    to_id: 3,
+    to: "Jazz",
+    message: "Awesome!",
+  },
+  {
+    from_id: 3,
+    from: "Jazz",
+    to_id: 1,
+    to: "Sami",
+    message: "Thanks ...",
+  }
+];
+const mainServer = app.listen(PORT, function() {
+  console.log('server running on port ', PORT);
 });
-// setInterval(intervalFunc, 1500);
-// function intervalFunc() {
-//     console.log('Timer yay!');
-// }
+
+const io = require('socket.io')(mainServer, {
+  cors: {
+    origin: '*',
+  }
+});
+io.on('connection', function(socket) {
+    console.log(socket.id)
+    socket.on('SEND_MESSAGE', function(data) {
+      console.log("WOWOWOWOWOOWO: ", data);
+      messages.push(data);
+      io.emit('MESSAGE', data);
+  });
+});
+
+app.get("/getConnectedUsers/:id", function(req, res) {
+  try {
+    let userId = req.params.id;
+    let otherUserIds = [];
+    messages.forEach(element => {
+      if(element.from_id == userId) {
+        otherUserIds.push({
+          id: element.to_id,
+          name: element.to
+        });
+      } else if(element.to_id == userId) {
+        otherUserIds.push({
+          id: element.from_id,
+          name: element.from
+        });
+      }
+    });
+    const result = [];
+    const map = new Map();
+    for (const item of otherUserIds) {
+        if(!map.has(item.id)){
+            map.set(item.id, true);    // set any value to Map
+            result.push({
+                id: item.id,
+                name: item.name
+            });
+        }
+    }
+    res.send({ result: result});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+app.get("/getMessages/:from_id/:to_id", function(req, res) {
+  try {
+    let fromId = req.params.from_id;
+    let toId = req.params.to_id;
+    console.log(fromId);
+    console.log(toId);
+    let allMessages = [];
+    messages.forEach(element => {
+      if(element.from_id == fromId && element.to_id == toId) {
+        allMessages.push(element);
+      } else if(element.from_id == toId && element.to_id == fromId) {
+        allMessages.push(element);
+      }
+    });
+    res.send({ result: allMessages});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+
