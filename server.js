@@ -24,6 +24,34 @@ app.use(morgan("tiny"));
 // Routing
 // app.use("/ws/", otherRoutes);
 
+var posts = [
+  {
+    user_name: 'Sami',
+    text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    num_likes: 0,
+  },
+  {
+    user_name: 'Sami',
+    text: 'Sometimes Ill start a sentance and I dont even know where its going.',
+    num_likes: 4,
+  },
+  {
+    user_name: 'Sami',
+    text: 'I. DECLARE. BANKRUPTCY.',
+    num_likes: 12,
+  },
+  {
+    user_name: 'Sami',
+    text: 'Occasionally, Ill hit somebody with my car, so sue me',
+    num_likes: 78,
+  },
+  {
+    user_name: 'Sami',
+    text: 'I am running away from my responsibilites, and it feels good',
+    num_likes: 46,
+  },
+]
+
 var users = [
   {
     name: 'Tirth',
@@ -75,6 +103,26 @@ app.post("/users", function(req, res) {
 app.get("/getUsers", function(req, res) {
   try {
     res.send({ result: users});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
+
+app.get("/getPosts", function(req, res) {
+  try {
+    res.send({ result: posts});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
+
+app.get("/getVerifiedUsers", function(req, res) {
+  try {
+    var v_list = []
+    for(var i = 0; i < users.length; i++){
+      if(users[i].account_type === 'verified') v_list.push(users[i])
+    }
+    res.send({ result: v_list});
   } catch(e) {
     res.send({ result: "Test Result"});
   }
