@@ -148,10 +148,10 @@ app.get("/test", function(req, res) {
 
 app.post("/users", function(req, res) {
   try {
-    var name = req.body.name;
-    var email = req.body.email;
-    var password = req.body.password;
-    var user_type = req.body.account_type;
+    //var name = req.body.name;
+    //var email = req.body.email;
+    //var password = req.body.password;
+    //var user_type = req.body.account_type;
 
     var new_obj = {
       name: req.body.name,
@@ -169,8 +169,9 @@ app.post("/users", function(req, res) {
 
     if(new_obj != null) users.push(new_obj);
     else console.log("Already exists")
-      
-    res.send({ result: "Test Result"});
+    
+    console.log(new_obj);
+    //res.send({ result: });
   } catch(e) {
       res.send("Error C-001: ", e);
   }
