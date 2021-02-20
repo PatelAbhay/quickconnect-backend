@@ -26,16 +26,22 @@ app.use(morgan("tiny"));
 
 var users = [
   {
-    name: 'a',
-    age: 12,
+    name: 'Tirth',
+    age: 20,
+    email: 'tirth@somewhere.com',
+    account_type: 'normal',
   },
   {
-    name: 'b',
-    age: 32,
+    name: 'Sami',
+    age: 24,
+    email: 'sami@somewhere.com',
+    account_type: 'verified',    
   },
   {
-    name: 'c',
-    age: 23,
+    name: 'Abhay',
+    age: 19,
+    email: 'abhay@somewhere.com',
+    account_type: 'normal',
   },
 ]
 
@@ -54,6 +60,7 @@ app.get("/test", function(req, res) {
     res.send({ result: "Test Result"});
   }
 });
+
 app.post("/users", function(req, res) {
   var email = req.body.email;
   var password = req.body.password;
@@ -64,6 +71,7 @@ app.post("/users", function(req, res) {
       res.send("Error C-001: ", e);
   }
 });
+
 app.get("/getUsers", function(req, res) {
   try {
     res.send({ result: users});
@@ -71,6 +79,7 @@ app.get("/getUsers", function(req, res) {
     res.send({ result: "Test Result"});
   }
 });
+
 app.listen(PORT, function() {
   console.log("Server started on port " + PORT + "...");
 });
