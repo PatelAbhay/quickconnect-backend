@@ -5,6 +5,13 @@ var path = require("path");
 var PORT = process.env.PORT || 3000;
 var cors = require("cors");
 
+const natural = require('natural');
+const aposToLexForm = require('apos-to-lex-form');
+const SpellCorrector = require('spelling-corrector');
+const SW = require('stopword');
+const spellCorrector = new SpellCorrector();
+spellCorrector.loadDictionary();
+
 
 
 var app = express();
@@ -413,32 +420,82 @@ app.post("/postLikeService", function(req, res) {
 });
 app.post("/postComment", function(req, res) {
   try {
-    posts.forEach(element => {
-      if(element.id == req.body.id) {
-        element.comments.unshift({
-          from_id: req.body.from_id,
-          from_name: req.body.from_name,
-          content: req.body.content,
-        });
-      }
-    });
-    res.send({ result: posts});
+    let content = req.body.content;
+
+    const lexedReview = aposToLexForm(content);
+    const casedReview = lexedReview.toLowerCase();
+    
+    const { WordTokenizer } = natural;
+    
+    const tokenizer = new WordTokenizer();
+    const tokenizedReview = tokenizer.tokenize(casedReview);
+
+    tokenizedReview.forEach((word, index) => {
+      tokenizedReview[index] = spellCorrector.correct(word);
+    })
+    console.log("testing2");
+    const filteredReview = SW.removeStopwords(tokenizedReview);
+    
+    const { SentimentAnalyzer, PorterStemmer } = natural;
+    const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
+    const analysis = analyzer.getSentiment(filteredReview);
+    //if analyiss is < 0 it is hate speech so dont allow the comment to go thru
+    console.log(analysis);
+    if(analysis < 0) {
+      res.send({ result: "Hate Speech"});
+    } else {
+      posts.forEach(element => {
+        if(element.id == req.body.id) {
+          element.comments.unshift({
+            from_id: req.body.from_id,
+            from_name: req.body.from_name,
+            content: req.body.content,
+          });
+        }
+      });
+      res.send({ result: posts});
+    }
   } catch(e) {
     res.send({ result: "Test Result"});
   }
 });
 app.post("/postCommentService", function(req, res) {
   try {
-    services.forEach(element => {
-      if(element.id == req.body.id) {
-        element.comments.unshift({
-          from_id: req.body.from_id,
-          from_name: req.body.from_name,
-          content: req.body.content,
-        });
-      }
-    });
-    res.send({ result: services});
+    let content = req.body.content;
+
+    const lexedReview = aposToLexForm(content);
+    const casedReview = lexedReview.toLowerCase();
+    
+    const { WordTokenizer } = natural;
+    
+    const tokenizer = new WordTokenizer();
+    const tokenizedReview = tokenizer.tokenize(casedReview);
+
+    tokenizedReview.forEach((word, index) => {
+      tokenizedReview[index] = spellCorrector.correct(word);
+    })
+    console.log("testing2");
+    const filteredReview = SW.removeStopwords(tokenizedReview);
+    
+    const { SentimentAnalyzer, PorterStemmer } = natural;
+    const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
+    const analysis = analyzer.getSentiment(filteredReview);
+    //if analyiss is < 0 it is hate speech so dont allow the comment to go thru
+    console.log(analysis);
+    if(analysis < 0) {
+      res.send({ result: "Hate Speech"});
+    } else {
+      services.forEach(element => {
+        if(element.id == req.body.id) {
+          element.comments.unshift({
+            from_id: req.body.from_id,
+            from_name: req.body.from_name,
+            content: req.body.content,
+          });
+        }
+      });
+      res.send({ result: services});
+    }
   } catch(e) {
     res.send({ result: "Test Result"});
   }
