@@ -115,7 +115,7 @@ var users = [
   {
     id: 1,
     name: 'Sami',
-    email: 'jabz@gmail.com',
+    email: 'samisami@gmail.com',
     password: 'samisami',
     account_type: 'regular',    
   },
@@ -134,11 +134,41 @@ var users = [
     password: "samisami"
   },
   {
-    account_type: "regular",
+    account_type: "service",
+    email: "jabar@gmail.com",
+    id: 5,
+    name: "Jabar",
+    password: "samisami"
+  },
+  {
+    account_type: "service",
     email: "john@gmail.com",
     id: 4,
     name: "John",
     password: "samisami"
+  }
+]
+
+var services = [
+  {
+    id: 0,
+    user_id: 5,
+    user_name: 'Jabar',
+    title: 'Remove Depression. Lets Talk!',
+    description: 'Are you depressed? I can help you. I am a professional and have been in this field for a long time.',
+    price: 45,
+    num_likes: 0,
+    comments: [],
+  },
+  {
+    id: 1,
+    user_id: 4,
+    user_name: 'John',
+    title: 'Hey student, lets talk about savings!',
+    description: 'Are you a student? Do you need help in budgeting and saving money? I am a professional associate who can help you in this regards.',
+    price: 25,
+    num_likes: 0,
+    comments: [],
   }
 ]
 
@@ -226,38 +256,24 @@ var messages = [
   {
     from_id: 1,
     from: "Sami",
-    to_id: 3,
-    to: "Jazz",
+    to_id: 5,
+    to: "Jabar",
     message: "Hi",
   },
   {
     from_id: 1,
     from: "Sami",
-    to_id: 3,
-    to: "Jazz",
-    message: "How are you?",
+    to_id: 5,
+    to: "Jabar",
+    message: "How are you",
   },
   {
-    from_id: 3,
-    from: "Jazz",
+    from_id: 5,
+    from: "Jabar",
     to_id: 1,
     to: "Sami",
-    message: "I am great!!",
+    message: "I am fine!",
   },
-  {
-    from_id: 1,
-    from: "Sami",
-    to_id: 3,
-    to: "Jazz",
-    message: "Awesome!",
-  },
-  {
-    from_id: 3,
-    from: "Jazz",
-    to_id: 1,
-    to: "Sami",
-    message: "Thanks ...",
-  }
 ];
 const mainServer = app.listen(PORT, function() {
   console.log('server running on port ', PORT);
@@ -383,6 +399,18 @@ app.post("/postLike", function(req, res) {
     res.send({ result: "Test Result"});
   }
 });
+app.post("/postLikeService", function(req, res) {
+  try {
+    services.forEach(element => {
+      if(element.id == req.body.id) {
+        element.num_likes += 1;
+      }
+    });
+    res.send({ result: services});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
 app.post("/postComment", function(req, res) {
   try {
     posts.forEach(element => {
@@ -397,5 +425,83 @@ app.post("/postComment", function(req, res) {
     res.send({ result: posts});
   } catch(e) {
     res.send({ result: "Test Result"});
+  }
+});
+app.post("/postCommentService", function(req, res) {
+  try {
+    services.forEach(element => {
+      if(element.id == req.body.id) {
+        element.comments.unshift({
+          from_id: req.body.from_id,
+          from_name: req.body.from_name,
+          content: req.body.content,
+        });
+      }
+    });
+    res.send({ result: services});
+  } catch(e) {
+    res.send({ result: "Test Result"});
+  }
+});
+app.get("/services", function(req, res) {
+  console.log("Services!");
+  try {
+    res.send({ result: services});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+app.get("/getService/:id", function(req, res) {
+  let userId = req.params.id;
+  let specificServices = [];
+  services.forEach(element => {
+    if(element.user_id == userId) {
+      specificServices.push(element);
+    }
+  });
+  try {
+    res.send({ result: specificServices});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+app.post("/services", function(req, res) {
+  let userId = req.body.service.user_id;
+  let specificServices = [];
+  services.push(req.body.service);
+  services.forEach(element => {
+    if(element.user_id == userId) {
+      specificServices.push(element);
+    }
+  });
+  try {
+    res.send({ result: specificServices});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+app.post("/sendMessageToServiceProvider", function(req, res) {
+  try {
+    messages.push(req.body.message);
+    res.send({ result: "SUCCESS"});
+  } catch(e) {
+    res.send({ error: e});
+  }
+});
+
+
+
+app.get("/machineLearning", function(req, res) {
+  let userId = req.params.id;
+  let specificServices = [];
+  services.forEach(element => {
+    if(element.user_id == userId) {
+      specificServices.push(element);
+    }
+  });
+  try {
+    res.send({ result: specificServices});
+  } catch(e) {
+    res.send({ error: e});
   }
 });
