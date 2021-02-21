@@ -135,9 +135,9 @@ var users = [
   },
   {
     account_type: "regular",
-    email: "sami@gmail.com",
+    email: "fred@gmail.com",
     id: 3,
-    name: "Jabz",
+    name: "Fred",
     password: "samisami"
   },
   {
